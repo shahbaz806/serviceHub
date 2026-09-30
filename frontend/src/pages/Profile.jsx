@@ -1,0 +1,11 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Camera, UserRound } from 'lucide-react';
+import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
+
+export default function Profile() {
+  const { user, setUser } = useAuth(); const [form, setForm] = useState({ name: user.name, profileImage: user.profileImage || '' }); const [busy, setBusy] = useState(false);
+  async function submit(event) { event.preventDefault(); if (form.name.trim().length < 2) return toast.error('Please enter your name.'); setBusy(true); try { const { data } = await api.patch('/users/profile', form); setUser(data.user); toast.success('Profile updated.'); } catch (e) { toast.error(e.response?.data?.message || 'Could not update profile.'); } finally { setBusy(false); } }
+  return <main className="container-page max-w-3xl py-12 sm:py-16"><p className="text-sm font-bold uppercase tracking-widest text-brand">Account settings</p><h1 className="mt-2 text-5xl">Your profile</h1><form onSubmit={submit} className="card mt-9 p-6 sm:p-8"><div className="flex items-center gap-5"><div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-full bg-sage text-brand">{form.profileImage ? <img className="h-full w-full object-cover" src={form.profileImage} alt="Profile"/> : <UserRound size={34}/>}</div><div><h2 className="text-2xl">{user.name}</h2><p className="mt-1 text-sm text-slate-500">{user.email}</p><p className="mt-2 inline-block rounded-full bg-sage px-3 py-1 text-xs font-bold capitalize text-brand">{user.role}</p></div></div><div className="mt-8 grid gap-5"><div><label className="label">Full name</label><input className="input" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}/></div><div><label className="label flex items-center gap-2"><Camera size={16}/> Profile image URL <span className="font-normal text-slate-400">(optional)</span></label><input className="input" type="url" placeholder="https://example.com/your-photo.jpg" value={form.profileImage} onChange={e => setForm({ ...form, profileImage: e.target.value })}/></div></div><button disabled={busy} className="btn-primary mt-7">{busy ? 'Saving...' : 'Save changes'}</button></form></main>;
+}
