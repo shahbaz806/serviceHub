@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { allBookings, cancelBooking, changeStatus, createBooking, myBookings } from '../controllers/bookingController.js'; import { adminOnly, protect } from '../middleware/auth.js';
+const router = Router(); router.post('/', protect, createBooking); router.get('/my', protect, myBookings); router.get('/', protect, adminOnly, allBookings); router.patch('/:id/status', protect, adminOnly, changeStatus); router.patch('/:id/cancel', protect, cancelBooking); export default router;

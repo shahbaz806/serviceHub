@@ -1,0 +1,2 @@
+import { Router } from 'express'; import { createService, deleteService, getService, getServices, updateService } from '../controllers/serviceController.js'; import { adminOnly, protect } from '../middleware/auth.js';
+const router = Router(); router.route('/').get(getServices).post(protect, adminOnly, createService); router.route('/:id').get(getService).patch(protect, adminOnly, updateService).delete(protect, adminOnly, deleteService); export default router;
