@@ -1,3 +1,4 @@
 import axios from 'axios';
-const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', withCredentials: true });
+// In development, Vite proxies /api so browser cookies stay same-site with the UI.
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || '/api', withCredentials: true });
 export default api;
