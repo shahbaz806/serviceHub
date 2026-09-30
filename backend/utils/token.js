@@ -12,5 +12,5 @@ export function sendToken(res, user, statusCode = 200) {
 }
 
 export function publicUser(user) {
-  return { id: user._id, name: user.name, email: user.email, role: user.role, profileImage: user.profileImage, createdAt: user.createdAt };
+  return { id: user._id, name: user.name, email: user.email, role: user.role, profileImage: user.profileImage, phone: user.phone, providerProfile: user.providerProfile, createdAt: user.createdAt };
 }

@@ -28,10 +28,11 @@ export function logout(req, res) { res.clearCookie('token', { httpOnly: true, sa
 export function profile(req, res) { res.json({ user: publicUser(req.user) }); }
 export async function updateProfile(req, res, next) {
   try {
-    const { name, profileImage } = req.body;
+    const { name, profileImage, phone } = req.body;
     if (name && name.trim().length < 2) return res.status(400).json({ message: 'Name must be at least 2 characters.' });
     req.user.name = name?.trim() || req.user.name;
     if (typeof profileImage === 'string') req.user.profileImage = profileImage.trim();
+    if (typeof phone === 'string') req.user.phone = phone.trim();
     await req.user.save();
     res.json({ user: publicUser(req.user), message: 'Profile updated.' });
   } catch (error) { next(error); }
