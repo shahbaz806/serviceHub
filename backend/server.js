@@ -13,8 +13,12 @@ import bookingRoutes from "./routes/bookingRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 const app = express();
+
 const configuredClientUrl = process.env.CLIENT_URL || "http://localhost:5173";
-const allowedOrigins = new Set([configuredClientUrl]);
+
+const allowedOrigins = new Set([configuredClientUrl,
+  "https://fronted-chi-lime-96.vercel.app",
+]);
 if (process.env.NODE_ENV !== "production") {
   allowedOrigins.add("http://localhost:5173");
   allowedOrigins.add("http://127.0.0.1:5173");
