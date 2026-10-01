@@ -18,6 +18,7 @@ const configuredClientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
 const allowedOrigins = new Set([configuredClientUrl,
   "https://fronted-chi-lime-96.vercel.app",
+  "https://frontend-r8bnp5dk6-shahbaz806s-projects.vercel.app",
 ]);
 if (process.env.NODE_ENV !== "production") {
   allowedOrigins.add("http://localhost:5173");
