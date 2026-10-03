@@ -12,27 +12,89 @@ import {
 } from "lucide-react";
 import api from "../services/api";
 import ServiceCard from "../components/ServiceCard";
-const benefits = [
-  [
-    "Verified pros",
-    "We match you with dependable, experienced local professionals.",
-  ],
-  [
-    "Easy scheduling",
-    "Choose a time that works for your day in just a few clicks.",
-  ],
-  ["Clear pricing", "Know your starting price before you book."],
+
+const HOW_STEPS = [
+  {
+    num: "01",
+    icon: Search,
+    title: "Find your service",
+    text: "Browse certified local services with upfront starting prices. Compare transparent ratings and reviews from your neighborhood.",
+  },
+  {
+    num: "02",
+    icon: Clock3,
+    title: "Pick a time",
+    text: "Schedule a convenient date, time, and location. Book in just a few clicks—no phone calls, no waiting.",
+  },
+  {
+    num: "03",
+    icon: CheckCircle2,
+    title: "Get it done",
+    text: "A trusted pro arrives ready to get the job done right. Relax while your home is taken care of.",
+  },
 ];
+
+const VALUE_PILLARS = [
+  {
+    icon: ShieldCheck,
+    title: "Verified & Insured Pros",
+    text: "Every technician is background-checked, credentialed, and fully insured before they join the ServiceHub network.",
+  },
+  {
+    icon: Sparkles,
+    title: "Clear, Upfront Pricing",
+    text: "Know your starting price before you confirm. No hidden fees, no surprise charges, and no dispatch costs.",
+  },
+  {
+    icon: Clock3,
+    title: "Effortless Scheduling",
+    text: "Choose an exact date and time that fits your day. Booking takes under two minutes with instant confirmation.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Workmanship Guarantee",
+    text: "Direct communication with your provider and full booking support ensuring every job is completed right.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: "ServiceHub made it ridiculously easy to find a great electrician. I booked in the morning and had the issue sorted that afternoon.",
+    name: "Maya R.",
+    role: "Happy homeowner · Electrical",
+    initials: "MR",
+  },
+  {
+    quote: "Everything was transparent from start to finish. The pricing was exactly what was quoted and the plumber arrived on time.",
+    name: "James T.",
+    role: "Verified customer · Plumbing",
+    initials: "JT",
+  },
+  {
+    quote: "I've used ServiceHub three times now. Each time the booking process has been seamless and the quality of work has been excellent.",
+    name: "Sara K.",
+    role: "Repeat customer · Home Cleaning",
+    initials: "SK",
+  },
+];
+
 export default function Home() {
   const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     api
       .get("/services")
       .then(({ data }) => setServices(data.services.slice(0, 3)))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
+
   return (
     <>
+      {/* ══════════════════════════════════════════════════════════════
+          HERO — Exact original layout before changes
+         ══════════════════════════════════════════════════════════════ */}
       <section className="overflow-hidden bg-sage">
         <div className="container-page grid min-h-[610px] items-center gap-12 py-16 lg:grid-cols-2 lg:py-24">
           <div>
@@ -86,129 +148,217 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="container-page py-20">
-        <div className="mb-9 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-brand">
-              Popular right now
-            </p>
-            <h2 className="mt-2 text-4xl">A hand for every home task.</h2>
-          </div>
-          <Link
-            to="/services"
-            className="hidden items-center gap-1 text-sm font-bold text-brand sm:flex"
-          >
-            See all services <ArrowRight size={16} />
-          </Link>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {services.length
-            ? services.map((s) => <ServiceCard key={s._id} service={s} />)
-            : [1, 2, 3].map((n) => (
-                <div
-                  className="h-80 animate-pulse rounded-2xl bg-slate-100"
-                  key={n}
-                />
-              ))}
-        </div>
-        <Link to="/services" className="btn-secondary mt-7 w-full sm:hidden">
-          See all services
-        </Link>
-      </section>
-      <section id="how" className="bg-ink py-20 text-white">
+
+      {/* ══════════════════════════════════════════════════════════════
+          POPULAR SERVICES
+         ══════════════════════════════════════════════════════════════ */}
+      <section className="bg-background py-20 lg:py-28">
         <div className="container-page">
-          <p className="text-sm font-bold uppercase tracking-widest text-[#a9dcbf]">
-            Simple by design
-          </p>
-          <h2 className="mt-2 text-4xl">
-            From search to sorted in three steps.
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {[
-              [
-                Search,
-                "Find your service",
-                "Browse services and choose the help your home needs.",
-              ],
-              [
-                Clock3,
-                "Pick a time",
-                "Schedule a convenient date, time, and location.",
-              ],
-              [
-                CheckCircle2,
-                "Get it done",
-                "A trusted pro arrives ready to get the job done.",
-              ],
-            ].map(([Icon, title, text], i) => (
-              <div key={title} className="border-t border-white/20 pt-6">
-                <span className="text-sm font-bold text-[#a9dcbf]">
-                  0{i + 1}
-                </span>
-                <Icon className="my-5" size={28} />
-                <h3 className="text-2xl">{title}</h3>
-                <p className="mt-3 leading-7 text-slate-300">{text}</p>
-              </div>
-            ))}
+          {/* Header */}
+          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="section-overline">Popular right now</p>
+              <h2 className="mt-2 text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
+                A hand for every home task.
+              </h2>
+              <p className="mt-3 max-w-lg text-base text-muted">
+                Explore frequently requested home services with upfront starting rates and verified local ratings.
+              </p>
+            </div>
+            <Link
+              to="/services"
+              className="hidden shrink-0 items-center gap-1.5 rounded-xl border border-border bg-white px-4 py-2.5 text-xs font-bold text-brand shadow-subtle transition hover:border-brand/30 sm:inline-flex"
+            >
+              See all services <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Cards */}
+          <div className="grid gap-6 md:grid-cols-3">
+            {loading
+              ? [1, 2, 3].map((n) => (
+                  <div key={n} className="skeleton h-[380px] rounded-2xl" />
+                ))
+              : services.map((s) => <ServiceCard key={s._id} service={s} />)}
+          </div>
+
+          <div className="mt-7 sm:hidden">
+            <Link to="/services" className="btn-secondary w-full justify-center">
+              See all services <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </section>
-      <section className="container-page py-20">
-        <div className="grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-brand">
-              Why ServiceHub
-            </p>
-            <h2 className="mt-2 text-4xl">
-              Home services that feel refreshingly reliable.
+
+      {/* ══════════════════════════════════════════════════════════════
+          HOW IT WORKS
+         ══════════════════════════════════════════════════════════════ */}
+      <section id="how" className="bg-ink py-20 lg:py-28 relative overflow-hidden">
+        {/* Subtle green glow */}
+        <div
+          className="pointer-events-none absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 opacity-30"
+          style={{ background: "radial-gradient(ellipse, #17734a 0%, transparent 65%)" }}
+          aria-hidden="true"
+        />
+
+        <div className="container-page relative z-10">
+          <div className="mb-16">
+            <p className="section-overline text-brand-light">Simple by design</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-[-0.025em] text-white sm:text-4xl">
+              From search to sorted in three steps.
             </h2>
           </div>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {benefits.map(([title, text]) => (
-              <div key={title}>
-                <div className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-sage text-brand">
-                  <CheckCircle2 size={21} />
+
+          {/* Steps */}
+          <div className="relative grid gap-8 md:grid-cols-3">
+            {/* Connector line */}
+            <div className="pointer-events-none absolute left-[16.5%] right-[16.5%] top-8 hidden h-px bg-white/10 md:block" aria-hidden="true" />
+
+            {HOW_STEPS.map(({ num, icon: Icon, title, text }) => (
+              <div
+                key={title}
+                className="relative rounded-2xl border border-white/10 bg-white/[0.05] p-7 backdrop-blur-sm"
+              >
+                <span className="absolute right-5 top-5 text-5xl font-bold text-white/[0.06]">
+                  {num}
+                </span>
+                <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand/20 text-brand-light">
+                  <Icon size={22} />
                 </div>
-                <h3 className="font-sans text-lg font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                <h3 className="mt-6 text-lg font-bold text-white">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/60">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-      <section className="bg-[#f9f4ed] py-20">
+
+      {/* ══════════════════════════════════════════════════════════════
+          WHY SERVICEHUB — Two-column editorial
+         ══════════════════════════════════════════════════════════════ */}
+      <section className="bg-white py-20 lg:py-28">
         <div className="container-page">
-          <div className="card max-w-3xl p-8 sm:p-12">
-            <div className="flex gap-1 text-accent">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <Star key={n} size={18} className="fill-current" />
+          <div className="grid gap-16 lg:grid-cols-[1fr_1.4fr] lg:items-start">
+            {/* Left: statement */}
+            <div className="lg:sticky lg:top-28">
+              <p className="section-overline">Why ServiceHub</p>
+              <h2 className="mt-3 text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
+                Home services that feel refreshingly reliable.
+              </h2>
+              <p className="mt-5 text-base leading-relaxed text-muted">
+                Built from the ground up to eliminate the friction, uncertainty, and phone tag of booking local contractors.
+              </p>
+              <Link to="/services" className="btn-primary mt-8 inline-flex px-6">
+                Browse services <ArrowRight size={17} />
+              </Link>
+            </div>
+
+            {/* Right: feature rows */}
+            <div className="flex flex-col gap-px rounded-2xl border border-border overflow-hidden">
+              {VALUE_PILLARS.map(({ icon: Icon, title, text }) => (
+                <div
+                  key={title}
+                  className="flex gap-4 bg-white p-6 transition hover:bg-surface-subtle"
+                >
+                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-tint text-brand">
+                    <Icon size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-ink">{title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted">{text}</p>
+                  </div>
+                </div>
               ))}
             </div>
-            <blockquote className="mt-5 text-2xl leading-relaxed sm:text-3xl">
-              “ServiceHub made it ridiculously easy to find a great electrician.
-              I booked in the morning and had the issue sorted that afternoon.”
-            </blockquote>
-            <p className="mt-6 font-bold">
-              Maya R.{" "}
-              <span className="font-normal text-slate-500">
-                — Happy homeowner
-              </span>
-            </p>
           </div>
         </div>
       </section>
-      <section className="container-page py-20">
-        <div className="rounded-[2rem] bg-brand px-7 py-12 text-center text-white sm:px-12">
-          <h2 className="text-4xl">Ready to cross something off?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/80">
-            Find the right local pro and book your service today.
-          </p>
-          <Link
-            to="/services"
-            className="btn mt-7 bg-white text-brand hover:bg-sage"
-          >
-            Explore services <ArrowRight size={18} />
-          </Link>
+
+      {/* ══════════════════════════════════════════════════════════════
+          TESTIMONIALS
+         ══════════════════════════════════════════════════════════════ */}
+      <section className="bg-background py-20 lg:py-28">
+        <div className="container-page">
+          <div className="mb-12">
+            <p className="section-overline">What customers say</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
+              Loved by homeowners.
+            </h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {TESTIMONIALS.map(({ quote, name, role, initials }) => (
+              <div
+                key={name}
+                className="flex flex-col gap-5 rounded-2xl border border-border bg-white p-6 shadow-subtle transition hover:-translate-y-1 hover:shadow-card"
+              >
+                {/* Stars */}
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Star key={n} size={14} className="fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <blockquote className="flex-1 text-sm leading-relaxed text-ink">
+                  "{quote}"
+                </blockquote>
+                <div className="flex items-center gap-3 border-t border-border pt-4">
+                  <div className="grid h-9 w-9 place-items-center rounded-full bg-brand text-xs font-bold text-white">
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-ink">{name}</p>
+                    <p className="text-xs text-muted">{role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          FINAL CTA — Dark green banner
+         ══════════════════════════════════════════════════════════════ */}
+      <section className="bg-ink py-20 lg:py-28">
+        <div className="container-page">
+          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-brand px-8 py-16 text-center sm:px-14">
+            {/* Background glow */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 60%)" }}
+              aria-hidden="true"
+            />
+
+            <div className="relative z-10 mx-auto max-w-2xl">
+              <span className="inline-block rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-bold uppercase tracking-widest text-white/80">
+                Ready to start?
+              </span>
+              <h2 className="mt-5 text-3xl font-bold tracking-[-0.025em] text-white sm:text-4xl lg:text-5xl">
+                Your home's to-do list,{" "}
+                <span className="text-white/70">handled today.</span>
+              </h2>
+              <p className="mx-auto mt-5 max-w-lg text-base text-white/70">
+                Find verified local professionals, view transparent starting rates, and reserve convenient time slots in minutes.
+              </p>
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to="/services"
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-base font-bold text-brand shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+                >
+                  Find a Service <ArrowRight size={18} />
+                </Link>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-base font-bold text-white transition hover:bg-white/20 hover:-translate-y-0.5"
+                >
+                  Create Account
+                </Link>
+              </div>
+              <p className="mt-6 text-xs text-white/40">
+                No credit card required to browse · Instant online booking
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </>

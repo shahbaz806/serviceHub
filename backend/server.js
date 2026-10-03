@@ -17,8 +17,8 @@ const app = express();
 const configuredClientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
 const allowedOrigins = new Set([configuredClientUrl,
-  "https://fronted-chi-lime-96.vercel.app",
-  "https://frontend-r8bnp5dk6-shahbaz806s-projects.vercel.app",
+ "http://localhost:5173",
+ "http://127.0.0.1:5173",
 ]);
 if (process.env.NODE_ENV !== "production") {
   allowedOrigins.add("http://localhost:5173");
