@@ -39,6 +39,26 @@ export default function Navbar() {
         : "text-muted hover:text-ink hover:bg-surface-subtle"
     }`;
 
+  const mobileLinkClass = ({ isActive }) =>
+    `rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
+      isActive ? "bg-brand-light text-brand font-bold" : "text-ink hover:bg-surface-subtle"
+    }`;
+
+  const mobileItems = user
+    ? [
+        ["Home", "/"],
+        ["Services", "/services"],
+        ["How It Works", "/#how"],
+        ["My Bookings", "/my-bookings"],
+        ["Profile", "/profile"],
+        ...(user.role === "admin" ? [["Admin Dashboard", "/admin"]] : []),
+      ]
+    : [
+        ["Home", "/"],
+        ["Services", "/services"],
+        ["How It Works", "/#how"],
+      ];
+
   return (
     <header
       className={`sticky top-0 z-50 border-b bg-white/95 backdrop-blur-md transition-all duration-200 ${
@@ -132,26 +152,22 @@ export default function Navbar() {
       >
         <div className="border-t border-border bg-white px-4 py-4">
           <nav className="flex flex-col gap-1">
-            {[
-              ["Home", "/"],
-              ["Services", "/services"],
-              ["My Bookings", "/my-bookings"],
-              ...(user?.role === "provider" ? [["Provider Profile", "/profile"]] : []),
-              ...(user?.role === "admin" ? [["Admin Dashboard", "/admin"]] : []),
-            ].map(([label, to]) => (
-              <NavLink
-                key={to}
-                to={to}
-                onClick={close}
-                className={({ isActive }) =>
-                  `rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
-                    isActive ? "bg-brand-light text-brand font-bold" : "text-ink hover:bg-surface-subtle"
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
+            {mobileItems.map(([label, to]) =>
+              to.includes("#") ? (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={close}
+                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface-subtle"
+                >
+                  {label}
+                </Link>
+              ) : (
+                <NavLink key={to} to={to} onClick={close} className={mobileLinkClass}>
+                  {label}
+                </NavLink>
+              )
+            )}
           </nav>
 
           <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
