@@ -3,6 +3,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock3,
+  Menu,
   Pencil,
   Plus,
   Settings,
@@ -92,9 +93,9 @@ function ServiceForm({ service, providers, onClose, onSaved }) {
   }
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/60 backdrop-blur-sm p-4 flex items-center justify-center">
-      <div className="card w-full max-w-3xl border border-slate-200/80 p-6 sm:p-8 shadow-lift animate-slide-up">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <h2 className="text-2xl font-bold text-ink">
+      <div className="card w-full min-w-0 max-w-3xl border border-slate-200/80 p-5 sm:p-8 shadow-lift animate-slide-up">
+        <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+          <h2 className="min-w-0 break-words text-xl font-bold text-ink sm:text-2xl">
             {service ? "Edit service" : "Add service"}
           </h2>
           <button
@@ -235,11 +236,11 @@ function ServiceForm({ service, providers, onClose, onSaved }) {
             />{" "}
             Service is publicly available
           </label>
-          <div className="flex gap-3 sm:col-span-2">
-            <button disabled={busy} className="btn-primary">
+          <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
+            <button disabled={busy} className="btn-primary w-full sm:w-auto">
               {busy ? "Saving..." : "Save service"}
             </button>
-            <button type="button" onClick={onClose} className="btn-secondary">
+            <button type="button" onClick={onClose} className="btn-secondary w-full sm:w-auto">
               Cancel
             </button>
           </div>
@@ -261,6 +262,7 @@ export default function Admin() {
   const [error, setError] = useState("");
   const [bookingSearch, setBookingSearch] = useState("");
   const [bookingStatus, setBookingStatus] = useState("all");
+  const [navOpen, setNavOpen] = useState(false);
   const load = async () => {
     setLoading(true);
     setError("");
@@ -334,7 +336,7 @@ export default function Admin() {
   if (loading) return <Loader label="Loading dashboard..." />;
   if (error || !stats)
     return (
-      <main className="container-page py-16">
+      <main className="container-page py-16 min-w-0 max-w-full">
         <div className="card mx-auto max-w-xl p-8 text-center">
           <h1 className="text-3xl">Admin dashboard unavailable</h1>
           <p className="mt-3 text-slate-600">
@@ -364,33 +366,46 @@ export default function Admin() {
     ["settings", "Settings"],
   ];
   return (
-    <div className="min-h-screen bg-[#fbfcfa]">
+    <div className="min-h-screen w-full min-w-0 max-w-full bg-[#fbfcfa]">
       {/* Concept 2: Executive Studio dark ink header */}
-      <div className="relative overflow-hidden bg-ink pb-10 pt-12">
+      <div className="relative overflow-hidden bg-ink pb-8 pt-8 sm:pb-10 sm:pt-12">
         <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-emerald-500/12 blur-3xl" />
         <div className="pointer-events-none absolute right-0 bottom-0 h-64 w-64 rounded-full bg-emerald-400/8 blur-3xl" />
         <div className="pointer-events-none absolute inset-0 bg-grid-dark opacity-30" />
-        <div className="container-page relative z-10">
+        <div className="container-page relative z-10 min-w-0">
           <p className="text-xs font-bold uppercase tracking-widest text-[#a9dcbf]">
             Control center
           </p>
-          <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-2 break-words text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
             Admin dashboard
           </h1>
         </div>
       </div>
-      <main className="container-page py-10 sm:py-14">
-        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
-        <aside className="card h-fit border border-slate-200/80 p-4 shadow-card">
+      <main className="container-page min-w-0 max-w-full py-6 sm:py-14">
+        <div className="mb-4 flex items-center gap-3 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setNavOpen(true)}
+            aria-label="Open admin menu"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-white text-ink"
+          >
+            <Menu size={18} />
+          </button>
+          <p className="min-w-0 truncate text-sm font-bold text-ink">
+            {nav.find((item) => item[0] === section)?.[1] || "Admin dashboard"}
+          </p>
+        </div>
+        <div className="grid min-w-0 max-w-full gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-8">
+        <aside className="card hidden h-fit border border-slate-200/80 p-4 shadow-card lg:block">
           <p className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-brand">
             Admin panel
           </p>
-          <nav className="mt-2 flex gap-1 overflow-x-auto lg:flex-col">
+          <nav className="mt-2 flex flex-col gap-1">
             {nav.map(([id, label]) => (
               <button
                 key={id}
                 onClick={() => setSection(id)}
-                className={`whitespace-nowrap rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition-all ${
+                className={`rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition-all ${
                   section === id
                     ? "bg-brand text-white shadow-sm shadow-brand/20"
                     : "text-slate-600 hover:bg-sage/60 hover:text-ink"
@@ -404,26 +419,72 @@ export default function Admin() {
             ))}
           </nav>
         </aside>
-        <div>
+        {navOpen ? (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <button
+              type="button"
+              className="absolute inset-0 bg-ink/60"
+              aria-label="Close admin menu"
+              onClick={() => setNavOpen(false)}
+            />
+            <aside className="relative flex h-full w-[min(18rem,calc(100%-1.5rem))] max-w-full flex-col border-r border-slate-200 bg-white p-4 shadow-lift">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="px-1 text-xs font-bold uppercase tracking-widest text-brand">
+                  Admin panel
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setNavOpen(false)}
+                  aria-label="Close"
+                  className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-slate-500"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <nav className="mt-2 flex min-w-0 flex-col gap-1">
+                {nav.map(([id, label]) => (
+                  <button
+                    key={id}
+                    onClick={() => {
+                      setSection(id);
+                      setNavOpen(false);
+                    }}
+                    className={`rounded-xl px-3.5 py-2.5 text-left text-sm font-bold transition-all ${
+                      section === id
+                        ? "bg-brand text-white shadow-sm shadow-brand/20"
+                        : "text-slate-600 hover:bg-sage/60 hover:text-ink"
+                    }`}
+                  >
+                    {id === "settings" && (
+                      <Settings size={15} className="mr-2 inline" />
+                    )}
+                    {label}
+                  </button>
+                ))}
+              </nav>
+            </aside>
+          </div>
+        ) : null}
+        <div className="w-full min-w-0 max-w-full">
           <p className="section-overline">
             Control center
           </p>
-          <h1 className="mt-1 display-md text-ink">
+          <h1 className="mt-1 display-md break-words text-ink">
             {nav.find((item) => item[0] === section)?.[1] || "Admin dashboard"}
           </h1>
           {section === "dashboard" && (
             <>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {metrics.map(([Icon, label, value]) => (
                   <div
-                    className="card border border-slate-200/80 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brand/25 hover:shadow-lift"
+                    className="card w-full min-w-0 border border-slate-200/80 p-4 sm:p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brand/25 hover:shadow-lift"
                     key={label}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="grid h-11 w-11 place-items-center rounded-xl bg-sage text-brand shadow-2xs">
+                    <div className="flex min-w-0 items-center justify-between gap-3">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-sage text-brand shadow-2xs">
                         <Icon size={20} />
                       </span>
-                      <span className="text-3xl font-extrabold text-ink">{value}</span>
+                      <span className="min-w-0 break-all text-3xl font-extrabold text-ink">{value}</span>
                     </div>
                     <p className="mt-4 text-xs font-bold uppercase tracking-wider text-slate-500">
                       {label}
@@ -431,13 +492,13 @@ export default function Admin() {
                   </div>
                 ))}
               </div>
-              <div className="card mt-5 border border-slate-200/80 p-6 bg-gradient-to-br from-white to-slate-50/50">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <div className="card mt-5 w-full min-w-0 max-w-full overflow-hidden border border-slate-200/80 p-4 sm:p-6 bg-gradient-to-br from-white to-slate-50/50">
+                <div className="flex min-w-0 flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 break-words">
                       Confirmed, active, and completed booking value
                     </p>
-                    <p className="mt-1 text-4xl font-extrabold text-brand tracking-tight">
+                    <p className="mt-1 break-all text-3xl font-extrabold text-brand tracking-tight sm:text-4xl">
                       ${stats.revenue.toFixed(2)}
                     </p>
                   </div>
@@ -450,12 +511,61 @@ export default function Admin() {
           )}
          
           {section === "services" && (
-            <section className="mt-8">
-              <button onClick={() => setAdding(true)} className="btn-primary">
+            <section className="mt-8 min-w-0">
+              <button onClick={() => setAdding(true)} className="btn-primary w-full sm:w-auto">
                 <Plus size={18} /> Add service
               </button>
-              <div className="card mt-5 overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl">
-                <table className="w-full min-w-[750px] text-left text-sm">
+              <div className="mt-5 space-y-3 md:hidden">
+                {services.map((service) => (
+                  <article
+                    className="card min-w-0 border border-slate-200/80 p-4 shadow-card"
+                    key={service._id}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="break-words font-bold text-ink">{service.title}</p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {service.category} · {service.duration} min
+                        </p>
+                      </div>
+                      <p className="shrink-0 font-bold text-brand">${service.price}</p>
+                    </div>
+                    <p className="mt-3 break-words text-sm text-slate-700">
+                      {service.providerId?.name || service.providerName}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                          service.isActive
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        <span className={`h-1.5 w-1.5 rounded-full ${service.isActive ? "bg-emerald-500" : "bg-slate-400"}`} />
+                        {service.isActive ? "Active" : "Disabled"}
+                      </span>
+                      <div className="flex shrink-0">
+                        <button
+                          className="text-brand hover:opacity-75 p-1 rounded-lg hover:bg-sage/40 transition"
+                          onClick={() => setEditing(service)}
+                          title="Edit"
+                        >
+                          <Pencil size={17} />
+                        </button>
+                        <button
+                          className="text-rose-600 hover:opacity-75 p-1 rounded-lg hover:bg-rose-50 transition"
+                          onClick={() => remove(service)}
+                          title="Delete"
+                        >
+                          <Trash2 size={17} />
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <div className="card mt-5 hidden w-full min-w-0 max-w-full overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl md:block">
+                <table className="w-full min-w-[720px] text-left text-sm">
                   <thead className="border-b border-slate-100 bg-slate-50/80 text-xs uppercase font-bold text-slate-500">
                     <tr>
                       <th className="p-4">Service</th>
@@ -469,7 +579,7 @@ export default function Admin() {
                     {services.map((service) => (
                       <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60 transition-colors" key={service._id}>
                         <td className="p-4 font-bold text-ink">
-                          {service.title}
+                          <span className="break-words">{service.title}</span>
                           <br />
                           <span className="text-xs font-normal text-slate-500">
                             {service.category} · {service.duration} min
@@ -517,16 +627,16 @@ export default function Admin() {
             </section>
           )}
           {section === "bookings" && (
-            <section className="mt-8">
-              <div className="flex flex-wrap gap-3">
+            <section className="mt-8 min-w-0">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
-                  className="input max-w-sm"
+                  className="input w-full min-w-0"
                   placeholder="Search booking, customer, service"
                   value={bookingSearch}
                   onChange={(e) => setBookingSearch(e.target.value)}
                 />
                 <select
-                  className="input max-w-48"
+                  className="input w-full min-w-0"
                   value={bookingStatus}
                   onChange={(e) => setBookingStatus(e.target.value)}
                 >
@@ -536,8 +646,52 @@ export default function Admin() {
                   ))}
                 </select>
               </div>
-              <div className="card mt-5 overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl">
-                <table className="w-full min-w-[850px] text-left text-sm">
+              <div className="mt-5 space-y-3 md:hidden">
+                {visibleBookings.length ? (
+                  visibleBookings.map((booking) => (
+                    <article
+                      className="card min-w-0 border border-slate-200/80 p-4 shadow-card"
+                      key={booking._id}
+                    >
+                      <p className="break-all font-bold text-ink">
+                        {booking.bookingNumber || booking._id.slice(-6)}
+                      </p>
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800">
+                        {booking.userId?.name}
+                      </p>
+                      <p className="break-words text-xs text-slate-500">{booking.phone}</p>
+                      <p className="mt-2 break-words text-sm font-semibold text-slate-800">
+                        {booking.serviceId?.title}
+                      </p>
+                      <p className="text-xs font-bold text-brand">${booking.price}</p>
+                      <p className="mt-2 text-sm text-slate-600">
+                        {booking.date}{" "}
+                        <span className="text-xs text-slate-500">{booking.time}</span>
+                      </p>
+                      <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
+                        <StatusBadge status={booking.status} />
+                        <select
+                          className="min-w-0 flex-1 rounded-lg border border-slate-200 p-1 text-xs outline-none bg-white hover:border-brand/40"
+                          value={booking.status}
+                          onChange={(e) =>
+                            updateStatus(booking._id, e.target.value)
+                          }
+                        >
+                          {statuses.map((status) => (
+                            <option key={status}>{status}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </article>
+                  ))
+                ) : (
+                  <p className="card p-6 text-center text-slate-500">
+                    No bookings match these filters.
+                  </p>
+                )}
+              </div>
+              <div className="card mt-5 hidden w-full min-w-0 max-w-full overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl md:block">
+                <table className="w-full min-w-[720px] text-left text-sm">
                   <thead className="border-b border-slate-100 bg-slate-50/80 text-xs uppercase font-bold text-slate-500">
                     <tr>
                       <th className="p-4">Booking</th>
@@ -577,10 +731,10 @@ export default function Admin() {
                             <span className="text-xs text-slate-500">{booking.time}</span>
                           </td>
                           <td className="p-4">
-                            <div className="flex items-center gap-2">
+                            <div className="flex min-w-0 flex-wrap items-center gap-2">
                               <StatusBadge status={booking.status} />
                               <select
-                                className="rounded-lg border border-slate-200 p-1 text-xs outline-none bg-white hover:border-brand/40"
+                                className="min-w-0 rounded-lg border border-slate-200 p-1 text-xs outline-none bg-white hover:border-brand/40"
                                 value={booking.status}
                                 onChange={(e) =>
                                   updateStatus(booking._id, e.target.value)
@@ -610,9 +764,38 @@ export default function Admin() {
             </section>
           )}
           {["users", "providers"].includes(section) && (
-            <section className="mt-8">
-              <div className="card overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl">
-                <table className="w-full min-w-[650px] text-left text-sm">
+            <section className="mt-8 min-w-0">
+              <div className="space-y-3 md:hidden">
+                {users
+                  .filter((user) =>
+                    section === "providers"
+                      ? user.role === "provider"
+                      : true
+                  )
+                  .map((user) => (
+                    <article
+                      className="card min-w-0 border border-slate-200/80 p-4 shadow-card"
+                      key={user._id}
+                    >
+                      <p className="break-words font-bold text-ink">{user.name}</p>
+                      <p className="mt-1 break-all text-sm text-slate-600">{user.email}</p>
+                      <p className="mt-1 text-sm text-slate-500">{user.phone || "—"}</p>
+                      <select
+                        className="mt-3 w-full min-w-0 rounded-lg border border-slate-200 px-2 py-1.5 text-xs font-semibold outline-none bg-white hover:border-brand/40"
+                        value={user.role}
+                        onChange={(e) =>
+                          updateRole(user._id, e.target.value)
+                        }
+                      >
+                        {["user", "provider", "admin"].map((role) => (
+                          <option key={role}>{role}</option>
+                        ))}
+                      </select>
+                    </article>
+                  ))}
+              </div>
+              <div className="card hidden w-full min-w-0 max-w-full overflow-x-auto border border-slate-200/80 shadow-card rounded-2xl md:block">
+                <table className="w-full min-w-[640px] text-left text-sm">
                   <thead className="border-b border-slate-100 bg-slate-50/80 text-xs uppercase font-bold text-slate-500">
                     <tr>
                       <th className="p-4">Name</th>
@@ -630,8 +813,8 @@ export default function Admin() {
                       )
                       .map((user) => (
                         <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60 transition-colors" key={user._id}>
-                          <td className="p-4 font-bold text-ink">{user.name}</td>
-                          <td className="p-4 text-slate-600">{user.email}</td>
+                          <td className="p-4 font-bold text-ink break-words">{user.name}</td>
+                          <td className="p-4 text-slate-600 break-all">{user.email}</td>
                           <td className="p-4 text-slate-500">{user.phone || "—"}</td>
                           <td className="p-4">
                             <select
@@ -654,7 +837,7 @@ export default function Admin() {
             </section>
           )}
           {section === "categories" && (
-            <section className="card mt-8 p-6 border border-slate-200/80 shadow-card rounded-2xl">
+            <section className="card mt-8 min-w-0 p-4 sm:p-6 border border-slate-200/80 shadow-card rounded-2xl">
               <p className="text-slate-600 font-medium">
                 Service categories are managed through service records.
               </p>
@@ -671,8 +854,8 @@ export default function Admin() {
             </section>
           )}
           {section === "settings" && (
-            <section className="card mt-8 p-6 border border-slate-200/80 shadow-card rounded-2xl">
-              <h2 className="text-2xl font-bold text-ink">Marketplace settings</h2>
+            <section className="card mt-8 min-w-0 p-4 sm:p-6 border border-slate-200/80 shadow-card rounded-2xl">
+              <h2 className="break-words text-xl font-bold text-ink sm:text-2xl">Marketplace settings</h2>
               <p className="mt-3 text-slate-600 leading-relaxed text-sm">
                 Use the environment configuration for database, JWT, client URL,
                 and production cookie settings. No sensitive settings are shown
