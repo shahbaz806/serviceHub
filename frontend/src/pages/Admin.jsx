@@ -59,6 +59,7 @@ function ServiceForm({ service, providers, onClose, onSaved }) {
         }
       : blankService
   );
+
   const [busy, setBusy] = useState(false);
   const set = (key, value) =>
     setForm((current) => ({ ...current, [key]: value }));
@@ -92,161 +93,431 @@ function ServiceForm({ service, providers, onClose, onSaved }) {
     }
   }
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/60 backdrop-blur-sm p-4 flex items-center justify-center">
-      <div className="card w-full min-w-0 max-w-3xl border border-slate-200/80 p-5 sm:p-8 shadow-lift animate-slide-up">
-        <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
-          <h2 className="min-w-0 break-words text-xl font-bold text-ink sm:text-2xl">
-            {service ? "Edit service" : "Add service"}
-          </h2>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-ink"
+    // <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/60 backdrop-blur-sm p-4 flex items-center justify-center">
+    //   <div className="card w-full min-w-0 max-w-3xl border border-slate-200/80 p-5 sm:p-8 shadow-lift animate-slide-up">
+    //     <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+    //       <h2 className="min-w-0 break-words text-xl font-bold text-ink sm:text-2xl">
+    //         {service ? "Edit service" : "Add service"}
+    //       </h2>
+    //       <button
+    //         onClick={onClose}
+    //         aria-label="Close"
+    //         className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-ink"
+    //       >
+    //         <X size={18} />
+    //       </button>
+    //     </div>
+    //     <form onSubmit={submit} className="mt-6 grid gap-5 sm:grid-cols-2">
+    //       <div>
+    //         <label className="label">Service title</label>
+    //         <input
+    //           className="input"
+    //           value={form.title}
+    //           onChange={(e) => set("title", e.target.value)}
+    //         />
+    //       </div>
+    //       <div>
+    //         <label className="label">Category</label>
+    //         <select
+    //           className="input"
+    //           value={form.category}
+    //           onChange={(e) => set("category", e.target.value)}
+    //         >
+    //           {categories.map((category) => (
+    //             <option key={category}>{category}</option>
+    //           ))}
+    //         </select>
+    //       </div>
+    //       <div>
+    //         <label className="label">Provider</label>
+    //         <select
+    //           className="input"
+    //           value={form.providerId}
+    //           onChange={(e) => {
+    //             const provider = providers.find(
+    //               (item) => item._id === e.target.value
+    //             );
+    //             setForm((current) => ({
+    //               ...current,
+    //               providerId: e.target.value,
+    //               providerName: provider?.name || current.providerName,
+    //             }));
+    //           }}
+    //         >
+    //           <option value="">Use provider name below</option>
+    //           {providers.map((provider) => (
+    //             <option value={provider._id} key={provider._id}>
+    //               {provider.name}
+    //             </option>
+    //           ))}
+    //         </select>
+    //       </div>
+    //       <div>
+    //         <label className="label">Provider display name</label>
+    //         <input
+    //           className="input"
+    //           value={form.providerName}
+    //           onChange={(e) => set("providerName", e.target.value)}
+    //         />
+    //       </div>
+    //       <div className="sm:col-span-2">
+    //         <label className="label">Description</label>
+    //         <textarea
+    //           className="input resize-none"
+    //           rows="3"
+    //           value={form.description}
+    //           onChange={(e) => set("description", e.target.value)}
+    //         />
+    //       </div>
+    //       <div>
+    //         <label className="label">Price ($)</label>
+    //         <input
+    //           className="input"
+    //           type="number"
+    //           min="0"
+    //           step="0.01"
+    //           value={form.price}
+    //           onChange={(e) => set("price", e.target.value)}
+    //         />
+    //       </div>
+    //       <div>
+    //         <label className="label">Duration (minutes)</label>
+    //         <input
+    //           className="input"
+    //           type="number"
+    //           min="15"
+    //           step="15"
+    //           value={form.duration}
+    //           onChange={(e) => set("duration", e.target.value)}
+    //         />
+    //       </div>
+    //       <div>
+    //         <label className="label">Rating</label>
+    //         <input
+    //           className="input"
+    //           type="number"
+    //           min="0"
+    //           max="5"
+    //           step="0.1"
+    //           value={form.rating}
+    //           onChange={(e) => set("rating", e.target.value)}
+    //         />
+    //       </div>
+    //       <div>
+    //         <label className="label">Location</label>
+    //         <input
+    //           className="input"
+    //           value={form.location}
+    //           onChange={(e) => set("location", e.target.value)}
+    //         />
+    //       </div>
+    //       <div className="sm:col-span-2">
+    //         <label className="label">Available time slots</label>
+    //         <input
+    //           className="input"
+    //           value={form.availableSlots}
+    //           onChange={(e) => set("availableSlots", e.target.value)}
+    //           placeholder="09:00, 11:00, 14:00"
+    //         />
+    //       </div>
+    //       <div className="sm:col-span-2">
+    //         <label className="label">Image URL</label>
+    //         <input
+    //           className="input"
+    //           type="url"
+    //           value={form.image}
+    //           onChange={(e) => set("image", e.target.value)}
+    //         />
+    //       </div>
+    //       <label className="flex items-center gap-2 text-sm font-bold sm:col-span-2">
+    //         <input
+    //           type="checkbox"
+    //           checked={form.isActive}
+    //           onChange={(e) => set("isActive", e.target.checked)}
+    //         />{" "}
+    //         Service is publicly available
+    //       </label>
+    //       <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
+    //         <button disabled={busy} className="btn-primary w-full sm:w-auto">
+    //           {busy ? "Saving..." : "Save service"}
+    //         </button>
+    //         <button type="button" onClick={onClose} className="btn-secondary w-full sm:w-auto">
+    //           Cancel
+    //         </button>
+    //       </div>
+    //     </form>
+    //   </div>
+    // </div>
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-ink/60 backdrop-blur-sm">
+  <div className="flex min-h-full items-start justify-center p-4 sm:p-6">
+    <div className="card w-full min-w-0 max-w-3xl border border-slate-200/80 p-5 shadow-lift animate-slide-up sm:p-8">
+      
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
+        <h2 className="min-w-0 break-words text-xl font-bold text-ink sm:text-2xl">
+          {service ? "Edit service" : "Add service"}
+        </h2>
+
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-ink"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Form */}
+      <form
+        onSubmit={submit}
+        className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2"
+      >
+        {/* Service Title */}
+        <div className="min-w-0">
+          <label className="label block">
+            Service title
+          </label>
+
+          <input
+            type="text"
+            className="input w-full"
+            value={form.title}
+            onChange={(e) => set("title", e.target.value)}
+          />
+        </div>
+
+        {/* Category */}
+        <div className="min-w-0">
+          <label className="label block">
+            Category
+          </label>
+
+          <select
+            className="input w-full"
+            value={form.category}
+            onChange={(e) => set("category", e.target.value)}
           >
-            <X size={18} />
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Provider */}
+        <div className="min-w-0">
+          <label className="label block">
+            Provider
+          </label>
+
+          <select
+            className="input w-full"
+            value={form.providerId}
+            onChange={(e) => {
+              const provider = providers.find(
+                (item) => item._id === e.target.value
+              );
+
+              setForm((current) => ({
+                ...current,
+                providerId: e.target.value,
+                providerName:
+                  provider?.name || current.providerName,
+              }));
+            }}
+          >
+            <option value="">
+              Use provider name below
+            </option>
+
+            {providers.map((provider) => (
+              <option
+                value={provider._id}
+                key={provider._id}
+              >
+                {provider.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Provider Display Name */}
+        <div className="min-w-0">
+          <label className="label block">
+            Provider display name
+          </label>
+
+          <input
+            type="text"
+            className="input w-full"
+            value={form.providerName}
+            onChange={(e) =>
+              set("providerName", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Description */}
+        <div className="min-w-0 sm:col-span-2">
+          <label className="label block">
+            Description
+          </label>
+
+          <textarea
+            className="input w-full resize-none"
+            rows={3}
+            value={form.description}
+            onChange={(e) =>
+              set("description", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Price */}
+        <div className="min-w-0">
+          <label className="label block">
+            Price ($)
+          </label>
+
+          <input
+            className="input w-full"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.price}
+            onChange={(e) =>
+              set("price", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Duration */}
+        <div className="min-w-0">
+          <label className="label block">
+            Duration (minutes)
+          </label>
+
+          <input
+            className="input w-full"
+            type="number"
+            min="15"
+            step="15"
+            value={form.duration}
+            onChange={(e) =>
+              set("duration", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Rating */}
+        <div className="min-w-0">
+          <label className="label block">
+            Rating
+          </label>
+
+          <input
+            className="input w-full"
+            type="number"
+            min="0"
+            max="5"
+            step="0.1"
+            value={form.rating}
+            onChange={(e) =>
+              set("rating", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Location */}
+        <div className="min-w-0">
+          <label className="label block">
+            Location
+          </label>
+
+          <input
+            type="text"
+            className="input w-full"
+            value={form.location}
+            onChange={(e) =>
+              set("location", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Available Slots */}
+        <div className="min-w-0 sm:col-span-2">
+          <label className="label block">
+            Available time slots
+          </label>
+
+          <input
+            type="text"
+            className="input w-full"
+            value={form.availableSlots}
+            onChange={(e) =>
+              set("availableSlots", e.target.value)
+            }
+            placeholder="09:00, 11:00, 14:00"
+          />
+        </div>
+
+        {/* Image URL */}
+        <div className="min-w-0 sm:col-span-2">
+          <label className="label block">
+            Image URL
+          </label>
+
+          <input
+            className="input w-full"
+            type="url"
+            value={form.image}
+            onChange={(e) =>
+              set("image", e.target.value)
+            }
+          />
+        </div>
+
+        {/* Active */}
+        <label className="flex min-w-0 items-center gap-2 text-sm font-bold sm:col-span-2">
+          <input
+            type="checkbox"
+            checked={form.isActive}
+            onChange={(e) =>
+              set("isActive", e.target.checked)
+            }
+            className="shrink-0"
+          />
+
+          <span>
+            Service is publicly available
+          </span>
+        </label>
+
+        {/* Buttons */}
+        <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:col-span-2 sm:flex-row">
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-primary w-full sm:w-auto"
+          >
+            {busy ? "Saving..." : "Save service"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-secondary w-full sm:w-auto"
+          >
+            Cancel
           </button>
         </div>
-        <form onSubmit={submit} className="mt-6 grid gap-5 sm:grid-cols-2">
-          <div>
-            <label className="label">Service title</label>
-            <input
-              className="input"
-              value={form.title}
-              onChange={(e) => set("title", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Category</label>
-            <select
-              className="input"
-              value={form.category}
-              onChange={(e) => set("category", e.target.value)}
-            >
-              {categories.map((category) => (
-                <option key={category}>{category}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="label">Provider</label>
-            <select
-              className="input"
-              value={form.providerId}
-              onChange={(e) => {
-                const provider = providers.find(
-                  (item) => item._id === e.target.value
-                );
-                setForm((current) => ({
-                  ...current,
-                  providerId: e.target.value,
-                  providerName: provider?.name || current.providerName,
-                }));
-              }}
-            >
-              <option value="">Use provider name below</option>
-              {providers.map((provider) => (
-                <option value={provider._id} key={provider._id}>
-                  {provider.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="label">Provider display name</label>
-            <input
-              className="input"
-              value={form.providerName}
-              onChange={(e) => set("providerName", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="label">Description</label>
-            <textarea
-              className="input resize-none"
-              rows="3"
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Price ($)</label>
-            <input
-              className="input"
-              type="number"
-              min="0"
-              step="0.01"
-              value={form.price}
-              onChange={(e) => set("price", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Duration (minutes)</label>
-            <input
-              className="input"
-              type="number"
-              min="15"
-              step="15"
-              value={form.duration}
-              onChange={(e) => set("duration", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Rating</label>
-            <input
-              className="input"
-              type="number"
-              min="0"
-              max="5"
-              step="0.1"
-              value={form.rating}
-              onChange={(e) => set("rating", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Location</label>
-            <input
-              className="input"
-              value={form.location}
-              onChange={(e) => set("location", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="label">Available time slots</label>
-            <input
-              className="input"
-              value={form.availableSlots}
-              onChange={(e) => set("availableSlots", e.target.value)}
-              placeholder="09:00, 11:00, 14:00"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="label">Image URL</label>
-            <input
-              className="input"
-              type="url"
-              value={form.image}
-              onChange={(e) => set("image", e.target.value)}
-            />
-          </div>
-          <label className="flex items-center gap-2 text-sm font-bold sm:col-span-2">
-            <input
-              type="checkbox"
-              checked={form.isActive}
-              onChange={(e) => set("isActive", e.target.checked)}
-            />{" "}
-            Service is publicly available
-          </label>
-          <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row">
-            <button disabled={busy} className="btn-primary w-full sm:w-auto">
-              {busy ? "Saving..." : "Save service"}
-            </button>
-            <button type="button" onClick={onClose} className="btn-secondary w-full sm:w-auto">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+      </form>
+
     </div>
+  </div>
+</div>
   );
 }
 

@@ -10,7 +10,7 @@ function hasWebGL() {
     return false;
   }
 }
-
+1
 function computeEnabled() {
   if (typeof window === "undefined") return false;
   const desktop = window.matchMedia("(min-width: 1024px)").matches;
